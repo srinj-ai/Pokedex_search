@@ -28,6 +28,7 @@ import streamlit as st
 import pandas as pd
 
 st.set_page_config(page_title="Pokémon Search", layout="wide")
+st.title("POKEDEX")
 st.title("🔍 Pokémon Search")
 
 @st.cache_data
@@ -119,4 +120,5 @@ if search:
 
 st.markdown("---")
 st.markdown("Developed by Srinjoy Das")
+
 
