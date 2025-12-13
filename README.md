@@ -58,7 +58,10 @@ pip install streamlit pandas
 ```
 streamlit run app.py
 ```
-
+or by:
+--
+https://pokedex-search-srinjoy.streamlit.app/
+--
 The app will open automatically in your default browser.
 
 ## 📄 Dataset
