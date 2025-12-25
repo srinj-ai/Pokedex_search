@@ -20,20 +20,17 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
 """
-
 
 import streamlit as st
 import pandas as pd
-
-st.set_page_config(page_title="Pokémon Search", layout="wide")
 st.title("POKEDEX")
+st.set_page_config(page_title="Pokémon Search", layout="wide")
 st.title("🔍 Pokémon Search")
 
 @st.cache_data
 def load_data():
-    return pd.read_csv("pokemon.csv")
+    return pd.read_csv("pokemon.csv", dtype={"Number": str})
 
 df = load_data()
 
@@ -59,7 +56,7 @@ TYPE_COLORS = {
     "Normal": "#A8A878"
 }
 
-search = st.text_input("Enter Pokémon name :")
+search = st.text_input("Enter Pokémon name (partial allowed):")
 
 if search:
     results = df[df["Name"].str.contains(search, case=False, na=False)]
@@ -76,7 +73,7 @@ if search:
 
                 # ---------- IMAGE ----------
                 with col1:
-                    poke_id = int(row["#"])
+                    poke_id = int(row["Number"])
                     img_url = (
                         "https://raw.githubusercontent.com/PokeAPI/sprites/master/"
                         f"sprites/pokemon/other/official-artwork/{poke_id}.png"
@@ -88,21 +85,19 @@ if search:
                     type1 = row["Type 1"]
                     name_color = TYPE_COLORS.get(type1, "#FFFFFF")
 
-                    # COLORED NAME
+                    # Name + Form
+                    name_text = row["Name"]
+                    if pd.notna(row["Form"]) and row["Form"].strip():
+                        name_text += f" ({row['Form']})"
+
                     st.markdown(
-                        f"<h2 style='color:{name_color};'>{row['Name']}</h2>",
+                        f"<h2 style='color:{name_color};'>{name_text}</h2>",
                         unsafe_allow_html=True
                     )
 
                     st.write(
-                        f"**Type:** {type1}"
+                        f"**Type:** {row['Type 1']}"
                         f"{'' if pd.isna(row['Type 2']) else ' / ' + row['Type 2']}"
-                    )
-
-                    st.write(f"**Total:** {row['Total']}")
-                    st.write(f"**Generation:** {row['Generation']}")
-                    st.write(
-                        f"**Legendary:** {'Yes 🔥' if row['Legendary'] else 'No'}"
                     )
 
                     st.markdown("### Stats")
@@ -112,13 +107,11 @@ if search:
                     stat_col1.metric("Attack", row["Attack"])
 
                     stat_col2.metric("Defense", row["Defense"])
-                    stat_col2.metric("Sp. Atk", row["Sp. Atk"])
+                    stat_col2.metric("Sp. Attack", row["Sp.Attack"])
 
-                    stat_col3.metric("Sp. Def", row["Sp. Def"])
+                    stat_col3.metric("Sp. Defense", row["Sp.Defense"])
                     stat_col3.metric("Speed", row["Speed"])
-
 
 st.markdown("---")
 st.markdown("Developed by Srinjoy Das")
-
 
